@@ -376,9 +376,11 @@ public class Messenger {
    }//end
 
    public static void AddToContact(Messenger esql){
-      // Your code goes here.
-      // ...
-      // ...
+      try{
+         esql.executeUpdate(query);
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
    }//end
 
    public static void ListContacts(Messenger esql){
