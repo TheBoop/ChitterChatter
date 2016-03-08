@@ -273,8 +273,8 @@ public class Messenger {
                 System.out.println(".........................");
                 System.out.println("9. Log out");
                 switch (readChoice()){
-                   case 1: AddToContact(esql); break;
-                   case 2: ListContacts(esql); break;
+                   case 1: AddToContact(esql,authorisedUser); break;
+                   case 2: ListContacts(esql,authorisedUser); break;
                    case 3: NewMessage(esql); break;
                    case 9: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
@@ -366,8 +366,8 @@ public class Messenger {
 
          String query = String.format("SELECT * FROM Usr WHERE login = '%s' AND password = '%s'", login, password);
          int userNum = esql.executeQuery(query);
-	 if (userNum > 0)
-		return login;
+   	   if (userNum > 0)
+   		   return login;
          return null;
       }catch(Exception e){
          System.err.println (e.getMessage ());
@@ -375,18 +375,40 @@ public class Messenger {
       }
    }//end
 
-   public static void AddToContact(Messenger esql){
+   public static void AddToContact(Messenger esql, String authorisedUser){
       try{
+         System.out.print("\tEnter contact login: ")
+         String contact = in.readLine();
+         
+         //Can implement existing contact in user contact list
+         String query = String.format("SELECT * FROM USR WHERE login = '%s'",contact);
+         int userNum = esql.executeUpdate(query);
+         if(userNum < 1){
+            System.out.print("\tNo user under login '%s'.",contact);
+         }else{
+            query = string.format(
+               "INSERT INTO USER_LIST_CONTAINS " + 
+               "VALUES (SELECT contact_list FROM USR WHERE login = '%s','%s') ",
+               authorisedUser,contact);
+         }
          esql.executeUpdate(query);
       }catch(Exception e){
          System.err.println (e.getMessage ());
       }
    }//end
 
-   public static void ListContacts(Messenger esql){
-      // Your code goes here.
-      // ...
-      // ...
+   public static void ListContacts(Messenger esql,String authorisedUser){
+      try{
+         String query = String.format(
+         "SELECT * FROM USER_LIST_CONTAINS "+
+         "WHERE (SELECT contact_list FROM USR WHERE login = '%s') = list_id",contact);
+         //Returns # of fitting results
+         int result = executeQueryAndPrintResult(query);
+         if(result <= 0)
+            System.out.print("No Contacts";)
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
    }//end
 
    public static void NewMessage(Messenger esql){
