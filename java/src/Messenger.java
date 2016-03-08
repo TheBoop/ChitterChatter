@@ -275,7 +275,7 @@ public class Messenger {
                 switch (readChoice()){
                    case 1: AddToContact(esql,authorisedUser); break;
                    case 2: ListContacts(esql,authorisedUser); break;
-                   case 3: NewMessage(esql); break;
+                   case 3: NewMessage(esql,authorisedUser); break;
                    case 9: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
                 }
@@ -405,16 +405,18 @@ public class Messenger {
          //Returns # of fitting results
          int result = executeQueryAndPrintResult(query);
          if(result <= 0)
-            System.out.print("No Contacts";)
+            System.out.print("No Contacts");
       }catch(Exception e){
          System.err.println (e.getMessage ());
       }
    }//end
 
-   public static void NewMessage(Messenger esql){
-      // Your code goes here.
-      // ...
-      // ...
+   public static void NewMessage(Messenger esql,String authorisedUser){
+      try{
+         
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
    }//end 
 
 
