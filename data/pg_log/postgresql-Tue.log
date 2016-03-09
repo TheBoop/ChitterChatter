@@ -57,3 +57,36 @@ LOG:  next transaction ID: 624; next OID: 16545
 LOG:  next MultiXactId: 1; next MultiXactOffset: 0
 LOG:  database system is ready
 LOG:  transaction ID wrap limit is 2147484146, limited by database "postgres"
+ERROR:  syntax error at or near "SELECT" at character 114
+ERROR:  column "norma" does not exist
+ERROR:  column "norma" does not exist
+ERROR:  column "norma" does not exist
+ERROR:  syntax error at or near "TheBoop" at character 85
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+ERROR:  syntax error at or near "SELECT" at character 40
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+ERROR:  insert or update on table "user_list_contains" violates foreign key constraint "user_list_contains_list_member_fkey"
+DETAIL:  Key (list_member)=(dfjkla                                            ) is not present in table "usr".
+LOG:  unexpected EOF on client connection
+ERROR:  insert or update on table "user_list_contains" violates foreign key constraint "user_list_contains_list_member_fkey"
+DETAIL:  Key (list_member)=(fdsafewqafe                                       ) is not present in table "usr".
+ERROR:  duplicate key violates unique constraint "user_list_contains_pkey"
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+ERROR:  duplicate key violates unique constraint "user_list_contains_pkey"
+ERROR:  duplicate key violates unique constraint "user_list_contains_pkey"
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+ERROR:  duplicate key violates unique constraint "user_list_contains_pkey"
+LOG:  unexpected EOF on client connection
+ERROR:  duplicate key violates unique constraint "user_list_contains_pkey"
+LOG:  unexpected EOF on client connection
