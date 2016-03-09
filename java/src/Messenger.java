@@ -111,13 +111,13 @@ public class Messenger {
       // iterates through the result set and output them to standard out.
       boolean outputHeader = true;
       while (rs.next()){
-	 if(outputHeader){
-	    for(int i = 1; i <= numCol; i++){
-		System.out.print(rsmd.getColumnName(i) + "\t");
-	    }
-	    System.out.println();
-	    outputHeader = false;
-	 }
+   if(outputHeader){
+      for(int i = 1; i <= numCol; i++){
+    System.out.print(rsmd.getColumnName(i) + "\t");
+      }
+      System.out.println();
+      outputHeader = false;
+   }
          for (int i=1; i<=numCol; ++i)
             System.out.print (rs.getString (i) + "\t");
          System.out.println ();
@@ -199,12 +199,12 @@ public class Messenger {
     * @throws java.sql.SQLException when failed to execute the query
     */
    public int getCurrSeqVal(String sequence) throws SQLException {
-	Statement stmt = this._connection.createStatement ();
-	
-	ResultSet rs = stmt.executeQuery (String.format("Select currval('%s')", sequence));
-	if (rs.next())
-		return rs.getInt(1);
-	return -1;
+  Statement stmt = this._connection.createStatement ();
+  
+  ResultSet rs = stmt.executeQuery (String.format("Select currval('%s')", sequence));
+  if (rs.next())
+    return rs.getInt(1);
+  return -1;
    }
 
    /**
@@ -256,35 +256,47 @@ public class Messenger {
             System.out.println("2. Log in");
             System.out.println("9. < EXIT");
             String authorisedUser = null;
-            switch (readChoice()){
+
+            switch (readChoice())
+            {
                case 1: CreateUser(esql); break;
                case 2: authorisedUser = LogIn(esql); break;
                case 9: keepon = false; break;
                default : System.out.println("Unrecognized choice!"); break;
-            }//end switch
-            if (authorisedUser != null) {
+            } //end switch
+
+            if (authorisedUser != null) 
+            {
               boolean usermenu = true;
               while(usermenu) {
                 System.out.println("MAIN MENU");
                 System.out.println("---------");
-                System.out.println("1. Add to contact list");
-                System.out.println("2. Browse contact list");
-                System.out.println("3. Write a new message");
+                System.out.println("1. Add a New Contact");
+                System.out.println("2. Browse Contact List");
+                System.out.println("3. Write a New Message");
+                System.out.println("4. Browse Chat List");
                 System.out.println(".........................");
                 System.out.println("9. Log out");
                 switch (readChoice()){
                    case 1: AddToContact(esql,authorisedUser); break;
                    case 2: ListContacts(esql,authorisedUser); break;
                    case 3: NewMessage(esql,authorisedUser); break;
+                   case 4: ListChats(esql, authorisedUser); break;
                    case 9: usermenu = false; break;
-                   default : System.out.println("Unrecognized choice!"); break;
+                   default : System.out.println("Invalid selection!"); break;
                 }
               }
             }
          }//end while
-      }catch(Exception e) {
+
+      }
+
+      catch(Exception e) 
+      {
          System.err.println (e.getMessage ());
-      }finally{
+      }
+
+      finally{
          // make sure to cleanup the created table and close the connection.
          try{
             if(esql != null) {
@@ -301,7 +313,7 @@ public class Messenger {
    public static void Greeting(){
       System.out.println(
          "\n\n*******************************************************\n" +
-         "              User Interface      	               \n" +
+         "              User Interface                       \n" +
          "*******************************************************\n");
    }//end Greeting
 
@@ -330,25 +342,29 @@ public class Messenger {
     * An empty block and contact list would be generated and associated with a user
     **/
    public static void CreateUser(Messenger esql){
-      try{
-         System.out.print("\tEnter user login: ");
-         String login = in.readLine();
-         System.out.print("\tEnter user password: ");
-         String password = in.readLine();
-         System.out.print("\tEnter user phone: ");
-         String phone = in.readLine();
+      try
+      {
+        System.out.print("\tEnter user login: ");
+        String login = in.readLine();
+        System.out.print("\tEnter user password: ");
+        String password = in.readLine();
+        System.out.print("\tEnter user phone: ");
+        String phone = in.readLine();
 
-	 //Creating empty contact\block lists for a user
-	 esql.executeUpdate("INSERT INTO USER_LIST(list_type) VALUES ('block')");
-	 int block_id = esql.getCurrSeqVal("user_list_list_id_seq");
-         esql.executeUpdate("INSERT INTO USER_LIST(list_type) VALUES ('contact')");
-	 int contact_id = esql.getCurrSeqVal("user_list_list_id_seq");
+        //Creating empty contact\block lists for a user
+        esql.executeUpdate("INSERT INTO USER_LIST(list_type) VALUES ('block')");
+        int block_id = esql.getCurrSeqVal("user_list_list_id_seq");
+        esql.executeUpdate("INSERT INTO USER_LIST(list_type) VALUES ('contact')");
+        int contact_id = esql.getCurrSeqVal("user_list_list_id_seq");
          
-	 String query = String.format("INSERT INTO USR (phoneNum, login, password, block_list, contact_list) VALUES ('%s','%s','%s',%s,%s)", phone, login, password, block_id, contact_id);
+        String query = String.format("INSERT INTO USR (phoneNum, login, password, block_list, contact_list) VALUES ('%s','%s','%s',%s,%s)", phone, login, password, block_id, contact_id);
 
-         esql.executeUpdate(query);
+        esql.executeUpdate(query);
          System.out.println ("User successfully created!");
-      }catch(Exception e){
+      }
+
+      catch(Exception e)
+      {
          System.err.println (e.getMessage ());
       }
    }//end
@@ -358,72 +374,129 @@ public class Messenger {
     * @return User login or null is the user does not exist
     **/
    public static String LogIn(Messenger esql){
-      try{
-         System.out.print("\tEnter user login: ");
-         String login = in.readLine();
-         System.out.print("\tEnter user password: ");
-         String password = in.readLine();
+      try
+      {
+        System.out.print("\tEnter user login: ");
+        String login = in.readLine();
+        System.out.print("\tEnter user password: ");
+        String password = in.readLine();
 
-         String query = String.format("SELECT * FROM Usr WHERE login = '%s' AND password = '%s'", login, password);
-         int userNum = esql.executeQuery(query);
-   	   if (userNum > 0)
-   		   return login;
-         return null;
-      }catch(Exception e){
+        String query = String.format("SELECT * FROM Usr WHERE login = '%s' AND password = '%s'", login, password);
+        int userNum = esql.executeQuery(query);
+
+        if (userNum > 0)
+         return login;
+
+        return null;
+      }
+
+      catch(Exception e)
+      {
          System.err.println (e.getMessage ());
          return null;
       }
-   }//end
+   } //end
 
    public static void AddToContact(Messenger esql, String authorisedUser){
-      try{
-         System.out.print("\tEnter contact login: ")
-         String contact = in.readLine();
+      try
+      {
+        System.out.print("\tEnter the contact's login: ");
+        String contact = in.readLine();
          
-         //Can implement existing contact in user contact list
-         String query = String.format("SELECT * FROM USR WHERE login = '%s'",contact);
-         int userNum = esql.executeUpdate(query);
-         if(userNum < 1){
-            System.out.print("\tNo user under login '%s'.",contact);
-         }else{
+        //Can implement existing contact in user contact list
+        String query = "SELECT * FROM USR WHERE login = '" + authorisedUser + "'";
+        int userNum = esql.executeQuery(query);
+
+         if(userNum == 0)
+         {
+            System.out.println("\t'" + authorisedUser + "' doesn't exist!");
+         }
+
+         else
+         {
+          // Select list_member from USER_LIST_CONTAINS WHERE list_id = (SELECT contact_list FROM USR WHERE login = 'Wailord');
+          /*
             query = string.format(
                "INSERT INTO USER_LIST_CONTAINS " + 
                "VALUES (SELECT contact_list FROM USR WHERE login = '%s','%s') ",
                authorisedUser,contact);
+               */
          }
-         esql.executeUpdate(query);
-      }catch(Exception e){
+         // esql.executeUpdate(query);
+      }
+
+      catch(Exception e)
+      {
          System.err.println (e.getMessage ());
       }
    }//end
 
-   public static void ListContacts(Messenger esql,String authorisedUser){
-      try{
-         String query = String.format(
-         "SELECT * FROM USER_LIST_CONTAINS "+
-         "WHERE (SELECT contact_list FROM USR WHERE login = '%s') = list_id",contact);
-         //Returns # of fitting results
-         int result = executeQueryAndPrintResult(query);
-         if(result <= 0)
-            System.out.print("No Contacts");
-      }catch(Exception e){
+   public static void ListContacts(Messenger esql,String authorizedUser){
+      
+      try
+      {
+        String query = 
+        "SELECT ULC.list_member " +
+        "FROM USER_LIST_CONTAINS ULC, USR U " + 
+        "WHERE U.contact_list = ULC.list_id AND U.login = '" + authorizedUser + "'";
+
+        System.out.print("\n");
+
+        //Returns # of fitting results
+        int result = esql.executeQuery(query);
+        if(result == 0)
+            System.out.print("You have no friends. :(\n\n");
+        else
+          System.out.print("\n\n");
+      }
+
+      catch(Exception e)
+      {
          System.err.println (e.getMessage ());
       }
+      
    }//end
 
-   public static void NewMessage(Messenger esql,String authorisedUser){
-      try{
-         
-      }catch(Exception e){
-         System.err.println (e.getMessage ());
+   public static void ListChats(Messenger esql, String authorizedUser)
+   {
+      try
+      {
+        // For display chats, check if person is member (currentUser) of chat_id.
+        // then display all chats according chat_id
+        String query = 
+        "SELECT C.chat_id, C.chat_type, C.init_sender " + 
+        "FROM CHAT C, CHAT_LIST CL " +
+        "WHERE C.chat_id = CL.chat_id AND CL.member = '" + authorizedUser + "'";
+
+        int userNum = esql.executeQuery(query);
+
+        System.out.print("\n\n---------------Your Chat List---------------\n");
+
+        if (userNum == 0)
+          System.out.print("You have no chats. Stop being anti-social!\n");
+
+        System.out.print("\n");
+      }
+
+      catch(Exception e)
+      {
+        System.err.println (e.getMessage ());
+      }
+
+   }
+
+   public static void NewMessage(Messenger esql, String authorisedUser) {
+
+      try
+      {
+         // check if person is a member of chat_id, 
+      }
+
+      catch(Exception e)
+      {
+        System.err.println (e.getMessage ());
       }
    }//end 
 
-
-   public static void Query6(Messenger esql){
-      // Your code goes here.
-      // ...
-      // ...
-   }//end Query6
 
 }//end Messenger

@@ -1,0 +1,59 @@
+LOG:  database system was shut down at 2016-03-08 15:04:37 PST
+LOG:  checkpoint record is at 0/38FFE0
+LOG:  redo record is at 0/38FFE0; undo record is at 0/0; shutdown TRUE
+LOG:  next transaction ID: 565; next OID: 10794
+LOG:  next MultiXactId: 1; next MultiXactOffset: 0
+LOG:  database system is ready
+LOG:  transaction ID wrap limit is 2147484146, limited by database "postgres"
+LOG:  transaction ID wrap limit is 2147484146, limited by database "postgres"
+ERROR:  table "message" does not exist
+ERROR:  table "chat_list" does not exist
+ERROR:  table "chat" does not exist
+ERROR:  table "user_list_contains" does not exist
+ERROR:  table "usr" does not exist
+ERROR:  table "user_list" does not exist
+NOTICE:  CREATE TABLE will create implicit sequence "user_list_list_id_seq" for serial column "user_list.list_id"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "user_list_pkey" for table "user_list"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "usr_pkey" for table "usr"
+NOTICE:  CREATE TABLE / UNIQUE will create implicit index "usr_phonenum_key" for table "usr"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "user_list_contains_pkey" for table "user_list_contains"
+NOTICE:  CREATE TABLE will create implicit sequence "chat_chat_id_seq" for serial column "chat.chat_id"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "chat_pkey" for table "chat"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "chat_list_pkey" for table "chat_list"
+NOTICE:  CREATE TABLE will create implicit sequence "message_msg_id_seq" for serial column "message.msg_id"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "message_pkey" for table "message"
+ERROR:  could not open file "/home/csmajs/dding002/ChitterChatter/data/usr_list.csv" for reading: No such file or directory
+ERROR:  could not open file "/home/csmajs/dding002/ChitterChatter/data/usr.csv" for reading: No such file or directory
+ERROR:  could not open file "/home/csmajs/dding002/ChitterChatter/data/usr_list_contains.csv" for reading: No such file or directory
+ERROR:  could not open file "/home/csmajs/dding002/ChitterChatter/data/chat.csv" for reading: No such file or directory
+ERROR:  could not open file "/home/csmajs/dding002/ChitterChatter/data/chat_list.csv" for reading: No such file or directory
+ERROR:  could not open file "/home/csmajs/dding002/ChitterChatter/data/message.csv" for reading: No such file or directory
+LOG:  checkpoints are occurring too frequently (3 seconds apart)
+HINT:  Consider increasing the configuration parameter "checkpoint_segments".
+LOG:  checkpoints are occurring too frequently (3 seconds apart)
+HINT:  Consider increasing the configuration parameter "checkpoint_segments".
+NOTICE:  CREATE TABLE will create implicit sequence "user_list_list_id_seq" for serial column "user_list.list_id"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "user_list_pkey" for table "user_list"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "usr_pkey" for table "usr"
+NOTICE:  CREATE TABLE / UNIQUE will create implicit index "usr_phonenum_key" for table "usr"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "user_list_contains_pkey" for table "user_list_contains"
+NOTICE:  CREATE TABLE will create implicit sequence "chat_chat_id_seq" for serial column "chat.chat_id"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "chat_pkey" for table "chat"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "chat_list_pkey" for table "chat_list"
+NOTICE:  CREATE TABLE will create implicit sequence "message_msg_id_seq" for serial column "message.msg_id"
+NOTICE:  CREATE TABLE / PRIMARY KEY will create implicit index "message_pkey" for table "message"
+LOG:  checkpoints are occurring too frequently (3 seconds apart)
+HINT:  Consider increasing the configuration parameter "checkpoint_segments".
+LOG:  checkpoints are occurring too frequently (3 seconds apart)
+HINT:  Consider increasing the configuration parameter "checkpoint_segments".
+LOG:  received smart shutdown request
+LOG:  shutting down
+LOG:  database system is shut down
+LOG:  logger shutting down
+LOG:  database system was shut down at 2016-03-08 15:39:38 PST
+LOG:  checkpoint record is at 0/1A36C060
+LOG:  redo record is at 0/1A36C060; undo record is at 0/0; shutdown TRUE
+LOG:  next transaction ID: 624; next OID: 16545
+LOG:  next MultiXactId: 1; next MultiXactOffset: 0
+LOG:  database system is ready
+LOG:  transaction ID wrap limit is 2147484146, limited by database "postgres"

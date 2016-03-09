@@ -1,0 +1,1 @@
+/usr/bin/postgres "-D" "/class/classes/dding002/ChitterChatter/data" "-p" "1204"
