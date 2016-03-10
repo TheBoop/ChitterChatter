@@ -10,3 +10,7 @@ ERROR:  duplicate key violates unique constraint "user_list_contains_pkey"
 LOG:  unexpected EOF on client connection
 ERROR:  duplicate key violates unique constraint "user_list_contains_pkey"
 FATAL:  database "dding002" does not exist
+LOG:  received smart shutdown request
+LOG:  shutting down
+LOG:  database system is shut down
+LOG:  logger shutting down

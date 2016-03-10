@@ -500,10 +500,7 @@ public class Messenger {
 				}
 		        System.out.println(output);
 	    	}
-      	}
-
-      	catch(Exception e)
-      	{
+      	}catch(Exception e){
          	System.err.println (e.getMessage ());
       	}     
    	}
@@ -545,8 +542,7 @@ public class Messenger {
    	}
    public static void ListChats(Messenger esql, String authorisedUser)
    {
-      try
-      {
+      try{
         // For display chats, check if person is member (currentUser) of chat_id.
         // then display all chats according chat_id
         String query = 
@@ -554,13 +550,29 @@ public class Messenger {
         "FROM CHAT C, CHAT_LIST CL " +
         "WHERE C.chat_id = CL.chat_id AND CL.member = '" + authorisedUser + "'";
 
-        List<List<String>> userNum = esql.executeQueryAndReturnResult(query);
+        List<List<String>> result = esql.executeQueryAndReturnResult(query);
+	        if(result.size() == 0){
+				System.out.println("Sorry you have no chats");
+	        }else{
+		        String output = "";
+		        System.out.println("======Message List=====");
+		        int count = 0;
+		        for(List<String> list : result)
+		        {
+		        	++count;
+		        	output +="\t"+count+". ";
 
-        System.out.print("\n\n---------------Your Chat List---------------\n");
-
-        //if (userNum == 0)
-          //System.out.print("You have no chats. Stop being anti-social!\n");
-
+					for(int i=0;i<list.size();++i){
+						if(i==list.size()-1)
+							output+=list.get(i).trim();
+						else
+							output+=list.get(i).trim() + ", ";
+					}
+					System.out.println(output);
+					output="";
+				}
+		        
+	    	}
         System.out.print("\n");
       }
 
