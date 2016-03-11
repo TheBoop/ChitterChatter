@@ -1,0 +1,7 @@
+LOG:  database system was shut down at 2016-03-09 19:09:06 PST
+LOG:  checkpoint record is at 0/1A397D80
+LOG:  redo record is at 0/1A397D80; undo record is at 0/0; shutdown TRUE
+LOG:  next transaction ID: 872; next OID: 16545
+LOG:  next MultiXactId: 1; next MultiXactOffset: 0
+LOG:  database system is ready
+LOG:  transaction ID wrap limit is 2147484146, limited by database "postgres"
