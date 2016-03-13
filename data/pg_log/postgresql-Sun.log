@@ -1,0 +1,17 @@
+LOG:  database system was interrupted at 2016-03-11 01:31:22 PST
+LOG:  checkpoint record is at 0/1A397D80
+LOG:  redo record is at 0/1A397D80; undo record is at 0/0; shutdown TRUE
+LOG:  next transaction ID: 872; next OID: 16545
+LOG:  next MultiXactId: 1; next MultiXactOffset: 0
+LOG:  database system was not properly shut down; automatic recovery in progress
+LOG:  record with zero length at 0/1A397DD0
+LOG:  redo is not required
+LOG:  database system is ready
+LOG:  transaction ID wrap limit is 2147484146, limited by database "postgres"
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+LOG:  unexpected EOF on client connection
+ERROR:  syntax error at or near "CL" at character 15
+LOG:  unexpected EOF on client connection
