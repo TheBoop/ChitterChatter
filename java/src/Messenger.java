@@ -530,7 +530,7 @@ public class Messenger {
       String answer = in.readLine();
 
       if (answer.equals("y") || answer.equals("Y") || answer.equals ("yes") || answer.equals ("YES")){
-        System.out.print("Please enter user password: ");
+        System.out.print("\tPlease enter user password: ");
         String password = in.readLine();
         String query = String.format("SELECT * FROM Usr WHERE login = '%s' AND password = '%s'", authorisedUser, password);
         int userNum = esql.executeQuery(query);
@@ -538,7 +538,7 @@ public class Messenger {
         if (userNum > 0){
           ret = DeleteAccountHelper(esql, authorisedUser);
         }else{
-          System.out.println("Wrong password, account not deleted.");
+          System.out.println("\tWrong password, account not deleted.");
           ret = false;
         }
       }
@@ -896,6 +896,17 @@ public class Messenger {
       int numSpaces = columnName.length();
       actualSpaces = numSpaces - listItem.length() - 1;
     }
+    else if (column == 2)
+    {
+      String columnName = "  Initial Sender   ";
+      actualSpaces = columnName.length() - listItem.length();
+    }
+
+    else if (column == 3)
+    {
+      String columnName = "  Recent Message ";
+      actualSpaces = columnName.length() - listItem.length();
+    }
 
     for (int i = 0; i < actualSpaces; i++)
       formattedString += " ";
@@ -907,9 +918,9 @@ public class Messenger {
   // Steph's Note: This function is only used when listing all of the chats.
   public static void DisplayChatTable()
   {
-    System.out.println("\n\t===============================================");
-    System.out.println("\t   Chat ID  |  Chat Type  |  Initial Sender");
-    System.out.println("\t============|=============|====================");
+    System.out.println("\n\t=========================================================================================");
+    System.out.println("\t   Chat ID  |  Chat Type  |   Initial Sender   |  Recent Message  |       Timestamp  ");
+    System.out.println("\t============|=============|====================|==================|======================");
   }
 
   /* Steph's: Note: The only thing I changed for ListChats was how I formatted the display.
@@ -921,10 +932,9 @@ public class Messenger {
       try{
         // For display chats, check if person is member (currentUser) of chat_id.
         // then display all chats according chat_id
-        String query = 
-        "SELECT C.chat_id, C.chat_type, C.init_sender " + 
-        "FROM CHAT C, CHAT_LIST CL " +
-        "WHERE C.chat_id = CL.chat_id AND CL.member = '" + authorisedUser + "'";
+        String query = String.format("SELECT C.*, M.msg_text, M.msg_timestamp FROM CHAT C, MESSAGE M WHERE M.msg_timestamp IN (SELECT MAX(M1.msg_timestamp) AS ts FROM MESSAGE M1 WHERE M1.chat_id = C.chat_id) AND  C.chat_id = M.chat_id AND C.chat_id IN  (SELECT CL.chat_id FROM CHAT_LIST CL WHERE CL.member='%s' ) ORDER BY M.msg_timestamp DESC", authorisedUser);
+
+        System.out.println("\tOne moment... loading chats...");
 
         List<List<String>> result = esql.executeQueryAndReturnResult(query);
           if(result.size() == 0){
@@ -953,13 +963,12 @@ public class Messenger {
             else
             {
                 String listItem = list.get(i).trim();
-
-                //output+=list.get(i).trim() + ", ";
+                if (listItem.length() > 15 && i == 3)
+                  listItem = listItem.substring(0,12) + "...";
                 output +=  listItem + FormatChatTableRow (rowString, listItem, i) + " ";
 
               }
             }
-
             output += "\n";
           }
           System.out.print(output);
@@ -1005,7 +1014,6 @@ public class Messenger {
     }
   }
 
-  //ENTER CHAT MADE BY KOALA
   public static void EnterChat(Messenger esql, String authorisedUser){
     try
     {
@@ -1144,10 +1152,24 @@ public class Messenger {
       String query = String.format("INSERT INTO CHAT (chat_id, chat_type, init_sender) VALUES (%d, 'private', '%s')", newChatID, authorisedUser);
       esql.executeUpdate(query);
 
-      DisplayContacts(esql,authorisedUser,true);
-
       String query1 = String.format("INSERT INTO chat_list (chat_id, member) VALUES (%d, '%s')", newChatID, authorisedUser);
       esql.executeUpdate(query1);
+
+      // ask user to write an initial message
+      String messageIDQuery = "SELECT msg_id FROM message ORDER BY msg_id DESC LIMIT 1";
+      String timestampQuery = "SELECT LOCALTIMESTAMP(0)";
+
+      List<List<String>> result_msgID = esql.executeQueryAndReturnResult(messageIDQuery);
+      List<List<String>> result_timestamp = esql.executeQueryAndReturnResult(timestampQuery);
+
+      int msgID = Integer.parseInt(result_msgID.get(0).get(0)) + 1;
+      String timestamp = result_timestamp.get(0).get(0);
+
+      System.out.print("\tEnter an initial message: ");
+      String message = in.readLine();
+      String initMessageQuery = String.format("INSERT INTO message (msg_id, msg_text, msg_timestamp, sender_login, chat_id) VALUES (%d, '%s', '%s', '%s', %d)",
+                                     msgID, message, timestamp, authorisedUser, newChatID);
+      esql.executeUpdate(initMessageQuery);
 
       // Create a dummy message which contains the dummy message's timestamp.
       // This timestamp is used to determine when the chat was created.
@@ -1157,6 +1179,7 @@ public class Messenger {
       // This means I need to take care of these special cases in Edit, Delete, Display message.
 
       // display contact list and prompt
+      DisplayContacts(esql,authorisedUser,false);
       System.out.println("Who do you want to add to the chat from your contact? \nEnter each contact one at a time. Type 'done' when finished adding.");
 
       boolean doneAdding = false;
@@ -1194,10 +1217,7 @@ public class Messenger {
         String query3 = String.format ("UPDATE chat SET chat_type = 'group' WHERE chat_id = %s", newChatID);
         esql.executeUpdate(query3);
       }
-
       System.out.println("\tChat #" + newChatID + " created.");
-
-
     }
     catch(Exception e)
     {
@@ -1456,7 +1476,7 @@ public class Messenger {
       }
   }
   
-  //SHOW CHAT MESSAGES MADE BY KOALA (this one shows all messages in a given chat)
+  //(this one shows all messages in a given chat)
   public static void ShowChatMessages(Messenger esql, String authorisedUser, int chatID, String chatIDChoice, int showNumMessages)
   {
     String menuTitle = "Chat #" + chatIDChoice + " Messages";
@@ -1497,7 +1517,6 @@ public class Messenger {
 
   }
 
-  //WRITE NEW MESSAGE MADE BY KOALA (writes a new message)
   public static String WriteNewMessage(Messenger esql, String authorisedUser, int chatID){
     String menuTitle = "Write a New Message";
     DisplayMenuTitle(menuTitle);
@@ -1635,7 +1654,6 @@ public class Messenger {
     return ret;
   }
 
-  //LOAD MESSAGES MADE BY KOALA (increments external variable by 10 so outside function will print more messages)
   public static int LoadMessages(int showNumMessages){
     return showNumMessages + 10;
   }
@@ -1782,8 +1800,7 @@ public class Messenger {
     DisplayMenuTitle(title);
     String ret = "";
 
-    try
-    {
+    try{
       // first display users in the chat
         String chatMemberQuery = String.format("SELECT CL.member FROM CHAT_LIST CL WHERE CL.chat_id = %d AND CL.member != '%s'", chatID, authorisedUser);
 
@@ -1852,7 +1869,6 @@ public class Messenger {
         } // end of else
 
     } // end of try
-
     catch (Exception e)
     {
       ret = e.getMessage();
