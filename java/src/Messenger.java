@@ -1089,7 +1089,7 @@ public class Messenger {
       return true;
 
    }
-
+   
   public static void ShowChatInterface(Messenger esql, String authorisedUser){
     try{
       boolean chatInterfacing = true;
@@ -1117,7 +1117,7 @@ public class Messenger {
       System.err.println(e.getMessage());
     }
   }
-
+  
   public static void EnterChat(Messenger esql, String authorisedUser){
     try
     {
@@ -1195,6 +1195,11 @@ public class Messenger {
           System.out.println("\t6. Add a User to Chat");
           System.out.println("\t7. Remove a User From Chat");
         }
+        
+        else
+        {
+			System.out.println("\t6. Leave Chat");
+		}
 
         System.out.println("\t=======================");
         System.out.println("\t9. Exit Chat");
@@ -1225,6 +1230,7 @@ public class Messenger {
             case 3: retMsg = DeleteMessage(esql, authorisedUser, chatID); break;
             case 4: retMsg = EditMessage(esql, authorisedUser, chatID); break;
             case 5: showNumMessages = LoadMessages(showNumMessages); messagesLoaded = true; break;
+            case 6: inChat = LeaveChat(esql, authorisedUser, chatID); break;
             case 9: inChat = false; break;
                                     
             default : System.out.println("\tInvalid choice!"); break;
@@ -1242,6 +1248,26 @@ public class Messenger {
     }
   } // end EnterChat
 
+  public static boolean LeaveChat(Messenger esql, String authorisedUser, int chatID){
+	  
+	try
+	{
+		String leaveChat = "DELETE FROM chat_list WHERE chat_id = "+chatID+" AND member = '"+authorisedUser+"'";
+		esql.executeUpdate(leaveChat);
+		
+		System.out.println("\tYou have left chat #" + chatID);
+		return false;
+	}
+	
+	catch (Exception e)
+	{
+		System.err.println(e.getMessage());
+	}
+	
+	return true;
+	
+	
+  }
   public static void CreateChat(Messenger esql, String authorisedUser){
     String title = "Create a New Chat";
     DisplayMenuTitle(title);
