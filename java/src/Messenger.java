@@ -287,9 +287,12 @@ public class Messenger {
               while(usermenu) {
                 printLogo();
                 System.out.println("\n\n\tYou are logged in as " + authorisedUser + ".");
+                System.out.print("\tStatus: ");
+                DisplayStatus(esql, authorisedUser);
                 System.out.println("\t===================================");
                 System.out.println("\t\tMAIN MENU");
                 System.out.println("\t===================================");
+                System.out.println("\t0. Change Status");
                 System.out.println("\t1. Show Chat Interface");
                 System.out.println("\t2. Show Contacts");
                 System.out.println("\t3. Show Blocked List");
@@ -302,6 +305,7 @@ public class Messenger {
                 System.out.println("\t===================================");
                 System.out.println("\t9. Log out");
                 switch (readChoice()){
+                   case 0: ChangeStatusMessage(esql, authorisedUser); break;
                    case 1: ShowChatInterface(esql, authorisedUser); break;
                    case 2: ListContacts(esql,authorisedUser); break;
                    case 3: ListBlocks(esql, authorisedUser); break;
@@ -687,14 +691,88 @@ public class Messenger {
       DisplayEndTitle(menuTitle);
    }
 
+   public static void DisplayStatus(Messenger esql, String authorisedUser)
+   {
+
+    try
+    {
+      String statusQuery = String.format("SELECT status FROM USR where login = '%s'", authorisedUser);
+      List<List<String>> statusResult = esql.executeQueryAndReturnResult(statusQuery);
+
+      String status = "";
+
+      if (statusResult.get(0).get(0) != null)
+        status = statusResult.get(0).get(0).trim();
+
+      System.out.println(status);
+    }
+
+    catch (Exception e)
+    {
+        System.err.println ("\t" + e.getMessage ());
+    }
+   }
+
+   public static void ChangeStatusMessage(Messenger esql, String authorisedUser)
+   {
+    String title = "Change Status Message";
+    DisplayMenuTitle(title);
+    try
+    {
+      System.out.print("\tOld status: ");
+      DisplayStatus(esql, authorisedUser);
+
+      System.out.print("\tNew status: ");
+      String newStatus = in.readLine();
+
+      String newStatusQuery = String.format("UPDATE USR SET status = '%s' WHERE login = '%s'", newStatus, authorisedUser);
+      esql.executeUpdate(newStatusQuery);
+
+    }
+
+    catch (Exception e)
+    {
+        System.err.println ("\t" + e.getMessage ());
+    }
+
+    DisplayEndTitle(title);
+   }
+
+   public static void FormatContact(Messenger esql, String contactName)
+   {
+      try
+      {
+        String statusQuery = String.format("SELECT status FROM USR where login = '%s'", contactName);
+        List<List<String>> statusResult = esql.executeQueryAndReturnResult(statusQuery);
+        String tab = "\t\t";
+
+        if (contactName.length() < 8)
+          tab = "\t\t\t";
+
+        String status = statusResult.get(0).get(0);
+
+        if (status == null)
+          status = "";
+        else
+          status = status.trim();
+
+        System.out.println("\t" + contactName.trim() + tab + "Status: " + status);
+      }
+
+      catch (Exception e)
+      {
+        System.err.println ("\t" + e.getMessage ());
+      }
+   }
+
    public static void DisplayContacts(Messenger esql, String authorisedUser, boolean flag)
    {
       try
       {
-        String query = 
+        String query =
         "SELECT ULC.list_member " +
         "FROM USER_LIST_CONTAINS ULC, USR U " + 
-        "WHERE U.contact_list = ULC.list_id AND U.login = '" + authorisedUser + "';";
+        "WHERE U.contact_list = ULC.list_id AND U.login = '" + authorisedUser + "'";
 
         //Returns # of fitting results
         //HAVE TO USE executeQueryAndReturnResult, no not use executeQuery
@@ -710,18 +788,15 @@ public class Messenger {
           int count = 0;
           for(List<String> list : result)
           {
-            ++count;
-            for(String word : list)
-              // output+="\t"+count +". "+ word.trim() + "\n";
-              output += "\t" + word.trim() + "\n";
+            String name = list.get(0).trim();
+            FormatContact(esql,  name);
           }
-            System.out.println(output);
         }
       }
       
       catch(Exception e)
       {
-        System.err.println (e.getMessage ());
+        System.err.println ("\t"+e.getMessage ());
       }
    }
 
@@ -916,16 +991,27 @@ public class Messenger {
   }
 
   // Steph's Note: This function is only used when listing all of the chats.
-  public static void DisplayChatTable()
+  public static void DisplayChatTable(boolean flag)
   {
-    System.out.println("\n\t=========================================================================================");
-    System.out.println("\t   Chat ID  |  Chat Type  |   Initial Sender   |  Recent Message  |       Timestamp  ");
-    System.out.println("\t============|=============|====================|==================|======================");
+    if (flag)
+    {
+      System.out.println("\n\t=========================================================================================");
+      System.out.println("\t   Chat ID  |  Chat Type  |   Initial Sender   |  Recent Message  |       Timestamp  ");
+      System.out.println("\t============|=============|====================|==================|======================");
+    }
+
+    else
+    {
+      System.out.println("\n\t==============================================");
+      System.out.println("\t   Chat ID  |  Chat Type  |   Initial Sender");
+      System.out.println("\t============|=============|===================");
+    }
   }
+
 
   /* Steph's: Note: The only thing I changed for ListChats was how I formatted the display.
    */
-   public static boolean ListChats(Messenger esql, String authorisedUser)
+   public static boolean ListChats(Messenger esql, String authorisedUser, boolean flag)
    {
       String menuTitle = "Your Chats";
       DisplayMenuTitle(menuTitle);
@@ -943,7 +1029,7 @@ public class Messenger {
             return false;
           }else{
 
-            DisplayChatTable();
+            DisplayChatTable(flag);
 
             String output = "";
             int count = 0;
@@ -1018,7 +1104,7 @@ public class Messenger {
     try
     {
 
-      if (!ListChats(esql, authorisedUser))
+      if (!ListChats(esql, authorisedUser,true))
         return;
 
       boolean invalidChatID = true;
@@ -1246,7 +1332,7 @@ public class Messenger {
       }
       else
       {
-        DisplayChatTable();
+        DisplayChatTable(false);
 
         String output = "";
         int count = 0;
