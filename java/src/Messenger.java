@@ -615,25 +615,36 @@ public class Messenger {
       try{
         System.out.print("\tEnter the contact's login: ");
         contact = in.readLine();
+        
+        
         String query1 = "SELECT * FROM USR WHERE login = '" + contact + "';";
         int userNum = esql.executeQuery(query1);
         if(userNum==0){
           System.out.println("\n\t" + contact + " doesn't exist!");
         }else{
-      //Remove from blocked
-          String removeFrom = String.format(
-            "DELETE FROM USER_LIST_CONTAINS "+
-          "WHERE (select block_list from USR where login='%s')=list_id "+
-          "AND list_member = '%s';",authorisedUser,contact);
-          esql.executeUpdate(removeFrom);
+			String checkBlock = String.format(
+			"SELECT * FROM USER_LIST_CONTAINS "+
+			"WHERE list_id = (SELECT block_list FROM USR WHERE login = '%s') "+
+			"AND list_member = '%s'",contact,authorisedUser);
+			int blockNum = esql.executeQuery(checkBlock);
+			if(blockNum > 0){
+			  System.out.println("\tSorry you were blocked by the user");
+			}else{
+		  //Remove from blocked
+			  String removeFrom = String.format(
+				"DELETE FROM USER_LIST_CONTAINS "+
+			  "WHERE (select block_list from USR where login='%s')=list_id "+
+			  "AND list_member = '%s';",authorisedUser,contact);
+			  esql.executeUpdate(removeFrom);
 
-          String addTo = String.format(
-              "INSERT INTO USER_LIST_CONTAINS " + 
-              "VALUES ((SELECT contact_list FROM USR WHERE login = '"+ authorisedUser +"'),'" 
-              + contact + "');" );
-            esql.executeUpdate(addTo);
+			  String addTo = String.format(
+				  "INSERT INTO USER_LIST_CONTAINS " + 
+				  "VALUES ((SELECT contact_list FROM USR WHERE login = '"+ authorisedUser +"'),'" 
+				  + contact + "');" );
+				esql.executeUpdate(addTo);
 
-            System.out.println("\n\t" + contact + " has been added to your contacts.");
+				System.out.println("\n\t" + contact + " has been added to your contacts.");
+			}
         }
       }
       catch(Exception e){ 
@@ -670,7 +681,14 @@ public class Messenger {
             "WHERE (select contact_list from USR where login='%s')=list_id "+
             "AND list_member = '%s';",authorisedUser,blocker);
             esql.executeUpdate(removeFrom);
-
+			
+			//Remove from contact of Blocker
+			String removeMe = String.format(
+              "DELETE FROM USER_LIST_CONTAINS "+
+            "WHERE (select contact_list from USR where login='%s')=list_id "+
+            "AND list_member = '%s';",blocker,authorisedUser);
+            esql.executeUpdate(removeMe);
+            
             //Add to Blocked
             String addTo = String.format(
                 "INSERT INTO USER_LIST_CONTAINS " + 
